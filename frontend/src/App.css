@@ -1,0 +1,154 @@
+
+.card-registration .select-input.form-control[readonly]:not([disabled]) {
+  font-size: 1rem;
+  line-height: 2.15;
+  padding-left: .75em;
+  padding-right: .75em;
+  }
+  
+  .card-registration .select-arrow {
+  top: 13px;
+  }
+  
+  .bg-grey {
+  background-color: #eae8e8;
+  }
+  
+  @media (min-width: 992px) {
+  .card-registration-2 .bg-grey {
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+  }
+  }
+  
+  @media (max-width: 991px) {
+  .card-registration-2 .bg-grey {
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  }
+  }
+  .track-line2 {
+    height: 2px !important;
+    background:  #d5dad9 ;
+    border: none;
+    opacity: 1;
+  }
+
+  .track-line1 {
+    height: 2px !important;
+    background: linear-gradient(to right, #488978 50%, #d5dad9 50%);
+    border: none;
+    opacity: 1;
+  }
+  .track-line {
+    height: 2px !important;
+    background:  #488978 ;
+    border: none;
+    opacity: 1;
+  }
+  
+  .dot {
+    height: 25px;
+    width: 25px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    background-color: #d5dad9;
+    border-radius: 50%;
+    display: inline-block
+  }
+  
+  .big-dot {
+    height: 25px;
+    width: 25px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    background-color: #488978;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  
+  .big-dot i {
+    font-size: 12px;
+  }
+  
+  .card-stepper {
+    z-index: 0
+  }
+
+  .search-container {
+    position: relative;
+    display: inline-block;
+    margin: 4px 2px;
+    height: 35px;
+    width: 30px;
+    vertical-align: bottom;
+  }
+  .searchbutton {
+    cursor: pointer;
+    position: absolute;
+    font-size: 17px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  .Search:focus + .searchbutton {
+    display: none;
+  }
+  .Search:not(:focus) + .searchbutton {
+    display: inline-block;
+  }
+  
+  .Search {
+    position: absolute;
+    left: 49px;
+    border-radius: 10px; 
+    background-color: white;
+    outline: none;
+    border: none;
+    padding: 0;
+    width: 0;
+    height: 100%;
+    z-index: 10;
+    transition-duration: 0.4s;
+    -moz-transition-duration: 0.4s;
+    -webkit-transition-duration: 0.4s;
+    -o-transition-duration: 0.4s;
+  }
+  
+  .Search:focus {
+    width: 250px; /* Bar width+1px */
+    padding: 0 16px 0 0;
+  }
+  
+  .expandright {
+    left: auto;
+    right: 30px; /* Button width-1px */
+  }
+  
+  .expandright:focus {
+    margin-right:100px ;
+    padding: 0 10px 0 16px;
+  }
+
+  .success-card {
+    padding: 16px;
+    margin: 16px;
+    border-radius: 8px;
+    background-color: #fbfbfb; /* Light gray background */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .success-mark {
+    font-size: 48px;
+    color: #4caf50;
+    border-radius: 50%;
+    height: 80px;
+    width: 80px;
+    background: #e3f3e3;
+  }
