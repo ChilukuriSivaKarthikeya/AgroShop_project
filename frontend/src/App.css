@@ -28,20 +28,20 @@
   }
   }
   .track-line2 {
-    height: 2px !important;
+    height: 6px !important;
     background:  #d5dad9 ;
     border: none;
     opacity: 1;
   }
 
   .track-line1 {
-    height: 2px !important;
+    height: 6px !important;
     background: linear-gradient(to right, #488978 50%, #d5dad9 50%);
     border: none;
     opacity: 1;
   }
   .track-line {
-    height: 2px !important;
+    height: 6px !important;
     background:  #488978 ;
     border: none;
     opacity: 1;

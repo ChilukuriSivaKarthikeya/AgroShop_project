@@ -29,7 +29,7 @@ function Login() {
              <AlertTitle>Failed login</AlertTitle>{error.detail}!</Alert>
             </Stack>}
             </div>
-          <FormControl sx={{marginBottom:'25px',width: '55ch' }} variant="outlined">
+          <FormControl sx={{marginBottom:'25px',width: '38ch' }} variant="outlined">
           <InputLabel htmlFor="outlined-adornment-password">Email</InputLabel>
           <OutlinedInput
             id="outlined-adornment-password"
@@ -39,7 +39,7 @@ function Login() {
             value={username}
             onChange={(e)=> setUsername(e.target.value)}
           /></FormControl>
-          <FormControl sx={{marginBottom:'25px',width: '55ch' }} variant="outlined">
+          <FormControl sx={{marginBottom:'25px',width: '38ch' }} variant="outlined">
           <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
           <OutlinedInput
             id="outlined-adornment-password"

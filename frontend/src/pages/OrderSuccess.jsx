@@ -19,7 +19,7 @@ function OrderSuccess() {
       <h2 className='my-3'>Order is placed successfully!</h2>
       <h5>Thank you for ordering!</h5>
       <MDBRow className='mt-5'>
-         <MDBBtn href='/' outline color='success' className='w-100'>Continue Shopping</MDBBtn>
+         <MDBBtn href='/user' outline color='success' className='w-100'>Continue Shopping</MDBBtn>
       </MDBRow>
     </MDBCard>
   </MDBCol>

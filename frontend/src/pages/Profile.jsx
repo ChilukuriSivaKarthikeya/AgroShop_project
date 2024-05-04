@@ -38,7 +38,7 @@ if (!buyer || !buyer.user) {
           <MDBCol>
             <MDBBreadcrumb className="bg-light rounded-3 p-3 mb-4">
               <MDBBreadcrumbItem>
-                <a href='/'>Home</a>
+                <a href='/user'>Home</a>
               </MDBBreadcrumbItem>
               <MDBBreadcrumbItem active>User Profile</MDBBreadcrumbItem>
             </MDBBreadcrumb>
@@ -57,7 +57,7 @@ if (!buyer || !buyer.user) {
                   fluid />
                 <p className="text-muted mt-2">{buyer.user.first_name}</p>
                 <div className="d-flex justify-content-center mb-1">
-                  <MDBBtn href='\editprofile'>Edit Profile</MDBBtn>
+                  <MDBBtn href='\user\editprofile'>Edit Profile</MDBBtn>
                 </div>
               </MDBCardBody>
             </MDBCard>
@@ -65,11 +65,11 @@ if (!buyer || !buyer.user) {
             <MDBCard className="mb-4 mb-lg-0">
               <MDBCardBody className="p-1">
                 <MDBListGroup flush className="rounded-3">
-                  <a href='\wishlist'><MDBBtn outline className="ms-1" style={{width:"98%"}}>
+                  <a href='\user\wishlist'><MDBBtn outline className="ms-1" style={{width:"98%"}}>
                      <FavoriteBorderOutlinedIcon className="me-4" />Wishlist</MDBBtn></a>
-                     <a href='\cart'><MDBBtn outline className="ms-1" style={{width:"98%"}}>
+                     <a href='\user\cart'><MDBBtn outline className="ms-1" style={{width:"98%"}}>
                      <ShoppingCartOutlinedIcon className="me-4"/>Cart</MDBBtn></a>
-                     <a href='\MyOrders'><MDBBtn outline className="ms-1" style={{width:"98%"}}>
+                     <a href='\user\MyOrders'><MDBBtn outline className="ms-1" style={{width:"98%"}}>
                      <ShoppingBagOutlinedIcon className="me-4"/>Orders</MDBBtn></a>
                 </MDBListGroup>
               </MDBCardBody>

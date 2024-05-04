@@ -118,11 +118,10 @@ export default function Checkout() {
 };
 const handlePlaceOrderAction = async() => {
       try {
-        const response = await axios.post('http://localhost:8000/placeOrder/', {
+        await axios.post('http://localhost:8000/placeOrder/', {
           addressData,paid,paymentmethod,total
         });
-        console.log('success');
-        navigate('/orderplaced')
+        navigate('/user/orderplaced')
       } catch (error) {
         
         if (error.response) {

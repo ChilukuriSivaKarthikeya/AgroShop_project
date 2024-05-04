@@ -34,14 +34,13 @@ useEffect(() => {
     setDiscount(calculatedDiscount);
   
 }, [cart]);
-
-if(isLoading){
+if(isLoading) {
   return <Spinner/>
-}    
+} 
 return (
     <div>
        {messageAlert &&  <Aleart message={messageAlert}/>}
-       {!cart.length>0? <section>
+       {!cart.length>0? (<section>
       <h1 className="d-flex justify-content-center align-items-center mt-5 text-danger">Empty Cart</h1>
       <MDBCol md='12'>
       <Player
@@ -52,7 +51,8 @@ return (
         style={{ height: '400px' }}
       />
       </MDBCol>
-    </section>:
+    </section>
+    ):(
     <section className="h-100 h-custom" style={{ backgroundColor: "#eee" }}>
       <MDBContainer className="py-5 h-100">
         <MDBRow className="justify-content-center align-items-center">
@@ -95,10 +95,10 @@ return (
                           </MDBTypography>
                         </MDBCol>
                         <MDBCol className="d-flex align-items-center">
-                          <MDBBtn color="link" onClick={() => item.quantity >1 && handleDecrement(item.product.id)} className="px-2">
+                          <MDBBtn color="link" onClick={() => item.quantity >=2 && handleDecrement(item.product.id)} className="px-2">
                             <MDBIcon fas icon="minus" />
                           </MDBBtn>
-                          <MDBInput type="number" className="text-center" value={item.quantity} />
+                          <MDBInput type="text" className="text-center" value={item.quantity} style={{width:'40px'}}/>
                           <MDBBtn color="link" onClick={() => item.quantity >=1 && handleIncrement(item.product.id) } className="px-2">
                             <MDBIcon fas icon="plus" />
                           </MDBBtn>
@@ -121,7 +121,7 @@ return (
                       <hr className="my-4" />
                       <div className="pt-5">
                         <MDBTypography tag="h6" className="mb-0">
-                          <MDBCardText tag="a" href="/" className="text-body">
+                          <MDBCardText tag="a" href="/user" className="text-body">
                             <MDBIcon fas icon="long-arrow-alt-left me-2" /> Back
                             to shop
                           </MDBCardText>
@@ -162,7 +162,7 @@ return (
                         <MDBTypography tag="h5">₹ {total-discount}</MDBTypography>
                       </div>
     
-                      <MDBBtn href="/order" color="dark" block size="lg">
+                      <MDBBtn href="/user/order" color="dark" block size="lg">
                         Place order
                       </MDBBtn>
                     </div>
@@ -174,6 +174,6 @@ return (
         </MDBRow>
       </MDBContainer>
     </section>
-  }
+  )}
   </div>
 );}

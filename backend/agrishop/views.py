@@ -18,6 +18,7 @@ from django.utils.html import format_html
 from django.http import JsonResponse
 from django.conf import settings
 from bson import Decimal128
+from django.core import serializers
 import razorpay
 import random
 
@@ -41,7 +42,6 @@ def registerUser(request):
     global stored_otp,stored_user_email
     stored_otp = data['otp']
     stored_user_email = data['email']
-    print(stored_otp)
 
     if data['email'] != stored_user_email or data['otp'] != stored_otp:
         return Response({'error': 'Invalid OTP or email'}, status=status.HTTP_400_BAD_REQUEST)
@@ -195,66 +195,11 @@ def updateUserImage(request, pk):
     serializer = BuyerSerializer(user, many=False)
     return Response(serializer.data)
 
-
-@api_view(['POST'])
-def createProduct(request):
-    user = request.user
-    
-    data = request.data
-    product = Products.objects.create(
-        name=data['name'],
-        category=data['category'],
-        quantity=data['quantity'],
-        price=data['price'],
-        discount=data['discount'],
-        location=data.getlist('location'),
-        image=data.get('image')
-    )
-
-    serializer = ProductsSerializer(product, many=False)
-    return Response(serializer.data)
-
-@api_view(['POST'])
-def createBuyer(request):
-    data = request.data
-    user = Buyer.objects.create(
-        name=data['name'],
-        email=data['email'],
-        password=data['password'],
-        mobile=data['mobile'],
-        village=data['village'],
-        pincode=data['pincode'],
-        image=data.get('image')
-    )
-
-    serializer =BuyerSerializer(user, many=False)
-    return Response(serializer.data)
-
-
 @api_view(['GET'])
 def getProducts(request):
     data =Products.objects.all()  
     serializers = ProductsSerializer(data, many=True)  
     return Response(serializers.data, status=200)
-
-@api_view(['PUT'])
-def updateProduct(request, pk):
-    data = request.data
-    product = Product.objects.get(_id=pk)
-    product.name = data['name']
-    product.price = data['price']
-    product.quantity = data['quantity']
-    product.category = data['category']
-    product.area = data['area']
-    product.save()
-    serializer = ProductSerializer(product, many=False)
-    return Response(serializer.data)
-
-@api_view(['DELETE'])
-def deleteProduct(request, pk):
-    product = Product.objects.get(_id=pk)
-    product.delete()
-    return Response('Producted Deleted')
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -269,7 +214,6 @@ def getWishlist(request):
 def addWishlist(request,pk):
     user = request.user
     product = Products.objects.get(id=pk)
-    print(product.name)
     if not Wishlist.objects.filter(user=user, product=product).exists():
         wishlist = Wishlist.objects.create(user=user,product=product)
         serializer = WishlistSerializer(wishlist)
@@ -350,8 +294,6 @@ def place_order(request):
     user = request.user
     cart_items = Cartitems.objects.filter(user=user)
     data = request.data 
-    print(data)
-    print(data['paymentmethod'])  
     order = Order.objects.create(user=user,totalPrice=data['total'],isPaid=bool(data['paid']),paymentmethod=data['paymentmethod'])
 
     shipping_address = ShippingAddress.objects.create(
@@ -367,7 +309,6 @@ def place_order(request):
     
     for cart_item in cart_items:
             price=(float(str(cart_item.product.price))-cart_item.product.discount/100)* cart_item.quantity
-            print("price is",price)
             OrderItem.objects.create(
                 order=order,
                 product=cart_item.product,
@@ -377,8 +318,7 @@ def place_order(request):
             product=Products.objects.get(id=cart_item.product.id)
             product.quantity -= cart_item.quantity
             product.save()
-    cart_items.delete()
-    
+    cart_items.delete()  
     return Response('order placed successfully')
 
 def create_order(request):
@@ -392,3 +332,110 @@ def create_order(request):
     }
     order = client.order.create(data=data)
     return JsonResponse(order)
+
+@api_view(['POST'])
+def registerSeller(request):
+    data = request.data
+    global stored_otp,stored_user_email
+    stored_otp = data['otp']
+    stored_user_email = data['email']
+    print(stored_otp)
+
+    if data['email'] != stored_user_email or data['otp'] != stored_otp:
+        return Response({'error': 'Invalid OTP or email'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+            user = User.objects.create(
+                first_name=data['name'],
+                username=data['email'],
+                email=data['email'],
+                password=make_password(data['password']),
+            )
+            
+            Seller.objects.create(
+                user=user,
+                mobile="",
+                village="",
+                pincode="",
+            )
+            serializer = UserSerializer(user, many=False)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    except Exception:
+            return Response({'error': 'User with this email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getMyProducts(request):
+    user = request.user
+    seller=Seller.objects.get(user=user)
+    products =  Products.objects.filter(seller=seller)
+    serializer = ProductsSerializer(products, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getMyorders(request):
+    user = request.user
+    seller = Seller.objects.get(user=user)
+    seller_products = Products.objects.filter(seller=seller)
+    order_items = OrderItem.objects.filter(product__in=seller_products)
+    orders = Order.objects.filter(orderitem__in=order_items).distinct()
+    serializer = OrderSerializer(orders, many=True)
+    return Response(serializer.data)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def updateOrderStatus(request,id):
+    order = Order.objects.get(id=id)
+    order.status=request.data['status']
+    order.save()
+    return Response("status updated succesfully",status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def createProduct(request):
+    user = request.user
+    try:
+        seller = Seller.objects.get(user=user)
+    except Seller.DoesNotExist:
+        return Response({"error": "Seller does not exist for this user"}, status=status.HTTP_404_NOT_FOUND)
+    data = request.data
+    product = Products.objects.create(
+        seller=seller,
+        name=data['name'],
+        category=data['category'],
+        quantity=data['quantity'],
+        price=data['price'],
+        discount=data['discount'],
+        location=data.getlist('location'),
+        image=data.get('image')
+    )
+
+    serializer = ProductsSerializer(product, many=False)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getProduct(request,id):
+    product=Products.objects.get(id=id)
+    serializer = ProductsSerializer(product)
+    return Response(serializer.data)
+
+@api_view(['PUT'])
+def updateProduct(request,id):
+    data = request.data
+    product = Products.objects.get(id=id)
+    product.name = data['name']
+    product.category = data['category']
+    product.price = data['price']
+    product.quantity = data['quantity']
+    product.location = data.getlist('location')
+    product.save()
+    serializer = ProductsSerializer(product, many=False)
+    return Response(serializer.data)
+
+@api_view(['DELETE'])
+def deleteProduct(request,id):
+    product = Products.objects.get(id=id)
+    product.delete()
+    return Response('Producted Deleted')

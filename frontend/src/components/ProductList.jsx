@@ -16,9 +16,9 @@ import UserContext from "../context/userContext";
 function ProductList() {
   const {query,location}=useContext(UserContext)
   const [products, setProducts] = useState([]);
-  const [value, setValue] = React.useState('1');
+  const [value, setValue] = React.useState("1");
 
-  const handleChange = (newValue) => {
+  const handleChange = (event,newValue) => {
     setValue(newValue);
   }
   useEffect(() => {
@@ -33,7 +33,6 @@ function ProductList() {
     fetchProducts();
   }, []);
   const keys=['name','category']
-  
   const filteredProducts = products.filter((item) => item.location.includes(location));
   const items=filteredProducts.filter((item)=>
     keys.some((key)=>item[key].toLowerCase().includes(query)))
@@ -98,5 +97,4 @@ function ProductList() {
     
   );
 }
-
 export default ProductList;

@@ -12,8 +12,7 @@ class BuyerSerializer(serializers.ModelSerializer):
     user = UserSerializer()  
     class Meta:  
         model = Buyer  
-        fields ='__all__'
-    
+        fields ='__all__'   
 
 class SellerSerializer(serializers.ModelSerializer):  
     class Meta:  
@@ -54,9 +53,10 @@ class ShippingAddressSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     orderItems = serializers.SerializerMethodField(read_only=True)
     shippingAddress = serializers.SerializerMethodField(read_only=True)
+    totalPrice = serializers.DecimalField(max_digits=7, decimal_places=2)
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = ['id', 'user', 'totalPrice', 'created_at', 'isPaid', 'status', 'paymentmethod', 'orderItems', 'shippingAddress']
 
     def get_orderItems(self, obj):
         items = obj.orderitem_set.all()

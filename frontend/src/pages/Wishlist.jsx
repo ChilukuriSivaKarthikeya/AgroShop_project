@@ -20,7 +20,7 @@ import {
     export default function Cart() {
     const {isLoading,wishlist,removeWishlist,addCart}=useContext(ProductContext);
     if(isLoading){
-      return <Spinner/>
+      return <Spinner/>;
     }
     return (
       <div>
@@ -91,7 +91,7 @@ import {
                       <div className="pt-5">
                         <MDBTypography tag="h6" className="mb-0">
                           <MDBCardText tag="a" href="#!" className="text-body">
-                            <MDBIcon fas icon="long-arrow-alt-left me-2" /><a href='/'> Back
+                            <MDBIcon fas icon="long-arrow-alt-left me-2" /><a href='/user'> Back
                             to shop</a>
                           </MDBCardText>
                         </MDBTypography>

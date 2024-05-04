@@ -21,9 +21,14 @@ urlpatterns = [
 
     path('createproduct/', views.createProduct, name='createproduct'),
     path('products/', views.getProducts, name='getproducts'),
+    path('product/<int:id>', views.getProduct, name='getproduct'),
     path('updateproduct/<int:id>', views.updateProduct, name='updateproduct'),
     path('deleteproduct/<int:id>', views.deleteProduct, name='deleteproduct'),
-    
+    path('seller/register/', views.registerSeller, name='registerseller'),
+    path('seller/orders/', views.getMyorders, name='getorders'),
+    path('seller/orderupdate/<int:id>', views.updateOrderStatus, name='updateOrderStatus'),
+    path('seller/products/', views.getMyProducts, name='getproducts'),
+
     path('wishlist/', views.getWishlist, name='getwishlist'),
     path('addwishlist/<int:pk>', views.addWishlist, name='addwishlist'),
     path('deletewishlist/<int:pk>', views.removeWishlist, name='deletewishlist'),

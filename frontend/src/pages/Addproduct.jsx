@@ -70,11 +70,12 @@ function Product() {
       formData.append('location', loc);
     });
     formData.append('image', image);  
-    
+    const token = localStorage.getItem('access_token');
     try {
       const response = await axios.post('http://localhost:8000/createproduct/', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',  // Set content type for form data
+          'Content-Type': 'multipart/form-data', 
+          'Authorization': `Bearer ${token}`, 
         },
       });
       
@@ -92,7 +93,7 @@ function Product() {
     <MDBContainer fluid>
       
       <MDBRow className='d-flex justify-content-center align-items-center'>
-        <MDBCol lg='9' className='my-5'>
+        <MDBCol lg='12'>
           <MDBCard>
           <MDBRow className='d-flex justify-content-center align-items-center'>
             <h2 className="text-uppercase fw-bold text-center mt-5">Add product</h2>

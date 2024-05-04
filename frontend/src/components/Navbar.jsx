@@ -1,4 +1,4 @@
-import React, { useState,useContext } from 'react';
+import React, { useState,useContext, useEffect } from 'react';
 import '../App.css'
 import {
   MDBContainer,
@@ -50,13 +50,15 @@ const names = [
 ];
 
 export default function Navbar() {
-  const [showShow, setShowShow] = useState(false);
-  const {isAuth,buyer,logoutUser,query,setQuery,location,setLocation,isLoading} = useContext(UserContext);
+  const {getUser,buyer,logoutUser,query,setQuery,location,setLocation,isLoading} = useContext(UserContext);
   const {wishlist,cart}=useContext(ProductContext)
 
-  const toggleShow = () => setShowShow(!showShow);
   const [open, setOpen] = React.useState(false);
-  
+
+  useEffect(()=>{
+    getUser()
+  },[]);
+
   const handleChange = (event) => {
     setLocation(event.target.value || '');
     localStorage.setItem('location',event.target.value);
@@ -130,7 +132,7 @@ export default function Navbar() {
             </MDBNavbarItem>
             
             <MDBNavbarItem className='mr-4'>
-                <MDBNavbarLink href="/wishlist" >
+                <MDBNavbarLink href="/user/wishlist" >
                   <MDBIcon fas icon="heart" style={{ fontSize:'20px' }}/>
                   {wishlist.length>0 &&
                   <MDBBadge color='danger' notification pill>
@@ -139,7 +141,7 @@ export default function Navbar() {
                 </MDBNavbarLink>
             </MDBNavbarItem>
             <MDBNavbarItem className='mr-4'>
-              <MDBNavbarLink href='/cart'>
+              <MDBNavbarLink href='/user/cart'>
                 <MDBIcon fas icon='shopping-cart' style={{ fontSize:'20px' }}/>
                 {cart.length>0 &&
                 <MDBBadge color='danger' notification pill>
@@ -155,13 +157,13 @@ export default function Navbar() {
 
                 <MDBDropdownMenu style={{padding:'10px'}}>
                   <MDBDropdownItem style={{paddingTop:'10px'}}>
-                  <MDBIcon fas icon="user" /><a href="/profile">Profile</a>
+                  <MDBIcon fas icon="user" /><a href="/user/profile">Profile</a>
                   </MDBDropdownItem>
                   <MDBDropdownItem style={{paddingTop:'10px'}}>
-                  <MDBIcon fas icon="edit" /><a href="/editprofile">Edit Profile</a>
+                  <MDBIcon fas icon="edit" /><a href="/user/editprofile">Edit Profile</a>
                   </MDBDropdownItem>
                   <MDBDropdownItem style={{paddingTop:'10px'}}>
-                  <MDBIcon fas icon="shopping-bag" /><a href="/MyOrders">MyOrders</a>
+                  <MDBIcon fas icon="shopping-bag" /><a href="/user/MyOrders">MyOrders</a>
                   </MDBDropdownItem>
                   <hr/>
                   <MDBDropdownItem>

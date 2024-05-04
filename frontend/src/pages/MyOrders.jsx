@@ -18,6 +18,37 @@ import Spinner from "../components/Spinner";
   export default function MyOrder() {
     const [orders,setOrders]=useState([])
     const [loading,setLoading]=useState(true)
+    const renderStatus = (status) => {
+      switch (status) {
+        case 'pending':
+          return <span>Pending</span>;
+        case 'placed':
+          return (<><span className="d-flex justify-content-center align-items-center big-dot  dot"><MDBIcon icon="dolly text-white" /></span>
+                 <hr className={`flex-fill track-line1`} />
+                 <span className="d-flex justify-content-center align-items-center dot"><MDBIcon fas icon="shipping-fast text-white" /></span>
+                 <hr className={`flex-fill track-line2`} />
+                 <span className="d-flex justify-content-center align-items-center dot"><MDBIcon icon="home text-white" /></span>
+                 </>);
+        case 'shipped':
+                  return (<><span className="d-flex justify-content-center align-items-center big-dot  dot"><MDBIcon icon="dolly text-white" /></span>
+                  <hr className={`flex-fill track-line`} />
+                  <span className="d-flex justify-content-center align-items-center big-dot dot"><MDBIcon fas icon="shipping-fast text-white" /></span>
+                  <hr className={`flex-fill track-line1`} />
+                  <span className="d-flex justify-content-center align-items-center dot"><MDBIcon icon="home text-white" /></span>
+                  </>);
+        case 'delivered':
+                return (<><span className="d-flex justify-content-center align-items-center big-dot  dot"><MDBIcon icon="dolly text-white" /></span>
+                <hr className={`flex-fill track-line`} />
+                <span className="d-flex justify-content-center align-items-center big-dot dot"><MDBIcon fas icon="shipping-fast text-white" /></span>
+                <hr className={`flex-fill track-line`} />
+                <span className="d-flex justify-content-center align-items-center big-dot dot"><MDBIcon icon="home text-white" /></span>
+                </>);
+        default:
+          return null;
+      }
+    };
+  
+  
     useEffect(() => {
         const fetchData = async () => {
           try {
@@ -99,58 +130,28 @@ import Spinner from "../components/Spinner";
                       className="mb-4"
                       style={{ backgroundColor: "#e0e0e0", opacity: 1 }}
                     />
-                   <MDBRow className="align-items-center">
+                    <MDBRow className="align-items-center">
                       <MDBCol md="3">
-                        <p className="fw-bold text-center mb-0 small">Track Order</p>
+                        <p className="fw-bold text-center mb-0 small">Order status</p>
                       </MDBCol>
-                  <MDBCol md="8"  className="mx-3" >
-                  <div className="d-flex flex-row justify-content-between align-items-center align-content-center">
-                    <span className="d-flex justify-content-center align-items-center big-dot dot">
-                      <MDBIcon icon="check text-white" />
-                    </span>
-                   
-                    {order.status==='shipped'?
-                     <hr className="flex-fill track-line" />:
-                     <hr className="flex-fill track-line1" />
-                    }
-                    {order.status==='shipped'?<div>
-                      <span className="d-flex justify-content-center align-items-center big-dot dot">
-                         <MDBIcon icon="check text-white" />
-                      </span>
-                    </div>:
-                      <div>
-                        <span className="dot"></span>
-                      </div>
-                    }
-                    {order.status==='delivered'?
-                     <hr className="flex-fill track-line2" />:
-                     <hr className="flex-fill track-line1" />
-                    }
-                    {order.status==='delivered'?<div>
-                      <span className="d-flex justify-content-center align-items-center big-dot dot">
-                         <MDBIcon icon="check text-white" />
-                      </span>
-                    </div>:
-                      <div>
-                        <span className="dot"></span>
-                      </div>
-                    }
-                    
-                  </div>
-                  <div className="d-flex flex-row justify-content-between align-items-center">
-                    <div className="d-flex flex-column align-items-start">
-                      <span>Order placed</span>
-                    </div>
-                    <div className="d-flex flex-column align-items-middle">
-                      <span>shipped</span>
-                    </div>
-                    <div className="d-flex flex-column align-items-end">
-                      <span>Delivered</span>
-                    </div>
-                  </div>
-                          </MDBCol>
-                        </MDBRow>
-                  
+                      <MDBCol md="8" className="mx-3">
+                        <div className="d-flex flex-row justify-content-between align-items-center align-content-center">
+                          {renderStatus(order.status)}
+                        </div>
+                        {order.status!=='pending' &&
+                        <div className="d-flex flex-row justify-content-between align-items-center">
+                          <div className="d-flex flex-column align-items-start">
+                            <span>Order placed</span>
+                          </div>
+                          <div className="d-flex flex-column align-items-middle">
+                            <span>Shipped</span>
+                          </div>
+                          <div className="d-flex flex-column align-items-end">
+                            <span>Delivered</span>
+                          </div>
+                        </div>}
+                      </MDBCol>
+                    </MDBRow>                 
                         </MDBCardBody>
                     </MDBCard>
                   <MDBRow className="d-flex justify-content-between align-items-center">

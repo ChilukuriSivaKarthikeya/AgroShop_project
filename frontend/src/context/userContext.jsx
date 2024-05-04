@@ -9,8 +9,7 @@ export default UserContext;
 export const UserProvider = ({ children }) => {
   const [isAuth, setIsAuth] = useState(()=>(localStorage.getItem('access_token') ? true : false));
   const [buyer, setBuyer] = useState(null);
-  const [change,setChange]=useState(0)
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState('');
   const [location,setLocation]=useState(localStorage.getItem('location') || '');
@@ -20,6 +19,7 @@ export const UserProvider = ({ children }) => {
   const getUser = async () => {
     if(localStorage.getItem('access_token')){
     const token = localStorage.getItem('access_token');
+    setIsLoading(true);
     try {
       const response = await axios.get('http://localhost:8000/buyer/', {
         method: 'GET',
@@ -31,10 +31,9 @@ export const UserProvider = ({ children }) => {
       if(response.status === 200){
         setBuyer(response.data);
         setIsLoading(false);
-    } else if(response.status === 401){
+      } else if(response.status === 401){
         logoutUser()
-    }
-      
+      }     
     } catch (error) {
       logoutUser()
       setError(error);
@@ -48,14 +47,12 @@ export const UserProvider = ({ children }) => {
         username,
         password,
       });
-      const data = response.data;
-       setChange(change+1)
+          const data = response.data;
           setIsAuth(true)
-          localStorage.clear()
           localStorage.setItem('access_token', data.access);
           localStorage.setItem('refresh_token', data.refresh);
           axios.defaults.headers['Authorization']=`Bearer ${data.access}`;
-          navigate('/')
+          navigate('/user')
     } catch (error) {
       if (error.response) {
          setError(error.response.data)
@@ -67,7 +64,8 @@ export const UserProvider = ({ children }) => {
 
   let logoutUser = () => {
     axios.defaults.headers['Authorization'] = null;
-    localStorage.clear()
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
     navigate('/login')
 }
 const updateToken = async () => {
@@ -90,11 +88,6 @@ const updateToken = async () => {
   }
 }
 }
-
-  useEffect(() => {
-    getUser();
-  }, [change]); 
-
   useEffect(()=>{
     if(isLoading){
         updateToken()
@@ -111,7 +104,7 @@ const updateToken = async () => {
 
 
   const data = {
-   
+    getUser,
     buyer,
     isLoading,
     error,

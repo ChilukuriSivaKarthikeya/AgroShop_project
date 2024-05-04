@@ -1,5 +1,6 @@
-import React, { useState, useEffect, createContext } from 'react';
+import React, { useState, useEffect, createContext, useCallback } from 'react';
 import axios from 'axios';
+import Spinner from '../components/Spinner';
 
 const ProductContext = createContext();
 
@@ -8,134 +9,102 @@ export default ProductContext;
 export const ProductProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState([]);
   const [cart, setCart] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [change, setChange] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [messageAlert, setMessageAlert] = useState('');
-  const [change, setChange] = useState(0);
   const token = localStorage.getItem('access_token');
 
-  const getWishlist = async () => {
+  const fetchData = async (url, setData) => {
     try {
-      if (!token) {
-        console.error('Access token is missing.');
-        return;
-      }
-      const response = await axios.get('http://localhost:8000/wishlist/', {
+      setIsLoading(true);
+      const response = await axios.get(url, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
       });
-
-      setWishlist(response.data);
+      setData(response.data);
       setIsLoading(false);
     } catch (error) {
       setError(error);
       setIsLoading(false);
-      console.error('Error fetching wishlist:', error);
+      console.error(`Error fetching data: ${error}`);
     }
   };
 
-  const handleWishlistAction = async (url, id) => {
+const handleAction = useCallback(async (url, method, setData) => {
+  try {
+    setIsLoading(true);
+    const response = await axios[method](url, null, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    setChange(!change);
+    setMessageAlert(response.data.message);
+    setIsLoading(false);
+
+    setTimeout(() => {
+      setMessageAlert('');
+    }, 6000);
+  } catch (error) {
+    setError(error);
+    setIsLoading(false);
+    console.error(`Error performing action: ${error}`);
+  }
+}, [change]);
+
+const addWishlist = useCallback((id) => {
+  handleAction(`http://localhost:8000/addwishlist/${id}`, 'post', setWishlist);
+}, [handleAction]);
+
+const removeWishlist = useCallback((id) => {
+  handleAction(`http://localhost:8000/deletewishlist/${id}`, 'delete', setWishlist);
+}, [handleAction]);
+
+const addCart = useCallback((id) => {
+  handleAction(`http://localhost:8000/addcart/${id}`, 'post', setCart);
+}, [handleAction]);
+
+const removeCart = useCallback((id) => {
+  handleAction(`http://localhost:8000/deletecart/${id}`, 'delete', setCart);
+}, [handleAction]);
+
+
+  const handleQuantityAction = useCallback(async (url) => {
     try {
-      const response = await axios.post(url, null, {
-        method: 'POST',
+      setIsLoading(true);
+      await axios.post(url, null, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
       });
-
-      setMessageAlert(response.data.message);
-      setChange(change + 1);
-
-      setTimeout(() => {
-        setMessageAlert('');
-      }, 6000);
-    } catch (error) {
-      console.error('Error performing wishlist action:', error);
-    }
-  };
-
-  const addWishlist = (id) => handleWishlistAction(`http://localhost:8000/addwishlist/${id}`, id);
-
-  const removeWishlist = (id) => handleWishlistAction(`http://localhost:8000/deletewishlist/${id}`, id);
-
-  const getCart = async () => {
-    try {
-      if (!token) {
-        console.error('Access token is missing.');
-        return;
-      }
-
-      const response = await axios.get('http://localhost:8000/cart/', {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      setCart(response.data);
       setIsLoading(false);
     } catch (error) {
       setError(error);
       setIsLoading(false);
-      console.error('Error fetching cart:', error);
+      console.error(`Error updating quantity: ${error}`);
     }
-  };
+  }, [token]);
 
-  const handleCartAction = async (url, id) => {
-    try {
-      const response = await axios.post(url, null, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      setMessageAlert(response.data.message);
-      setChange(change + 1);
-
-      setTimeout(() => {
-        setMessageAlert('');
-      }, 6000);
-    } catch (error) {
-      console.error('Error performing cart action:', error);
-    }
-  };
-
-  const addCart = (id) => handleCartAction(`http://localhost:8000/addcart/${id}`, id);
-
-  const removeCart = (id) => handleCartAction(`http://localhost:8000/deletecart/${id}`, id);
-
-  const handleQuantityAction = async (url, id) => {
-    try {
-      const response = await axios.post(url, null, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      setChange(change + 1);
-    } catch (error) {
-      console.error('Error performing quantity action:', error);
-    }
-  };
-
-  const handleIncrement = (id) => handleQuantityAction(`http://localhost:8000/increaseQuantity/${id}`, id);
-
-  const handleDecrement = (id) => handleQuantityAction(`http://localhost:8000/decreaseQuantity/${id}`, id);
+  const handleIncrement = useCallback((id) => handleQuantityAction(`http://localhost:8000/increaseQuantity/${id}`), [handleQuantityAction]);
+  const handleDecrement = useCallback((id) => handleQuantityAction(`http://localhost:8000/decreaseQuantity/${id}`), [handleQuantityAction]);
 
   useEffect(() => {
-    getWishlist();
-    getCart();
+    if (!token) {
+      console.error('Access token is missing.');
+      return;
+    }
+    fetchData('http://localhost:8000/wishlist/', setWishlist);
+    fetchData('http://localhost:8000/cart/', setCart);
   }, [change]);
 
   const data = {
     isLoading,
+    error,
     wishlist,
     addWishlist,
     removeWishlist,
