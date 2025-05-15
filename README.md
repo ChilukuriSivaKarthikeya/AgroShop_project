@@ -6,12 +6,30 @@ AgroShop is a platform where users can buy organic vegetables, fruits, and flowe
 - Farmer & User Registration/Login
 - Product Listings with Categories
 - Cart and Checkout System
-- Firebase Integration for DB & Auth
+- Payment gateway Integration 
   
 ## 🛠️ Built With
 - Python, Django Rest Framework
 - React.js
 - MongoDB
+  
+## 🖼️ Screenshots
+
+### 🔐 Login Page
+<img src="screenshots/login.png" alt="Login Page" width="600"/>
+
+### 🏠 Home Page
+<img src="screenshots/homepage.png" alt="Home Page" width="600"/>
+
+### 💖 Wishlist Page
+<img src="screenshots/wishlist.png" alt="Wishlist Page" width="600"/>
+
+### 🛒 Cart Page
+<img src="screenshots/cart.png" alt="Cart Page" width="600"/>
+
+### 🛒 Payment Page
+<img src="screenshots/payment.png" alt="Payment Page" width="600"/>
+
 
 ## 📦 Installation
 
