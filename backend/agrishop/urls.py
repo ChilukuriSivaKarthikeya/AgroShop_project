@@ -25,9 +25,13 @@ urlpatterns = [
     path('updateproduct/<int:id>', views.updateProduct, name='updateproduct'),
     path('deleteproduct/<int:id>', views.deleteProduct, name='deleteproduct'),
     path('seller/register/', views.registerSeller, name='registerseller'),
+    path('seller/update/<int:pk>', views.updateSeller, name='updateSeller'),
+    path('updatesellerimage/<int:pk>', views.updateSellerImage, name='updatesellerimage'),
+
     path('seller/orders/', views.getMyorders, name='getorders'),
     path('seller/orderupdate/<int:id>', views.updateOrderStatus, name='updateOrderStatus'),
     path('seller/products/', views.getMyProducts, name='getproducts'),
+    path('seller/', views.getSeller, name='seller'),
 
     path('wishlist/', views.getWishlist, name='getwishlist'),
     path('addwishlist/<int:pk>', views.addWishlist, name='addwishlist'),

@@ -26,10 +26,14 @@ import StoreIcon from '@mui/icons-material/Store';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import Dashboard from './Dashboard';
 import MyProducts from './Products';
 import MyOrders from './Orders';
-import Product from '../pages/Addproduct';
+import Product from './Addproduct';
 import UpdateProduct from './UpdateProduct';
+import Profile from './Profile';
+import Editprofile from './Editprofile';
+import UserContext from '../context/userContext';
 
 const drawerWidth = 240;
 
@@ -79,7 +83,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const defaultTheme = createTheme();
 
-export default function Dashboard() {
+export default function SellerHome() {
+  const {logoutSeller}=React.useContext(UserContext);
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -133,7 +138,7 @@ export default function Dashboard() {
             </Toolbar>
             <Divider />
             <List component="nav">
-              <ListItemButton sx={{py:3}} component={Link} to="/seller/orders">
+              <ListItemButton sx={{py:3}} component={Link} to="/seller/dashboard">
                 <ListItemIcon>
                   <DashboardIcon />
                 </ListItemIcon>
@@ -164,12 +169,12 @@ export default function Dashboard() {
                 </ListItemIcon>
                 <ListItemText primary="Profile" />
               </ListItemButton>
-              <ListItemButton sx={{py:3}} component={Link} to="/seller/logout">
-                <ListItemIcon>
-                  <LogoutIcon />
-                </ListItemIcon>
-                <ListItemText primary="Logout" />
-              </ListItemButton>
+              <ListItemButton sx={{ py: 3 }} onClick={logoutSeller}>
+              <ListItemIcon>
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary="Logout" />
+            </ListItemButton>
             </List>
           </Drawer>
           <Box
@@ -190,9 +195,12 @@ export default function Dashboard() {
                 <Grid item xs={12}>
                   <Paper sx={{ display: 'flex', flexDirection: 'column' }}>
                     <Routes>
+                    <Route path="/dashboard" element={<Dashboard/>} />
                       <Route path="/orders" element={<MyOrders/>} />
                       <Route path="/products" element={<MyProducts/>} />
                       <Route path="/addproduct" element={<Product/>} />
+                      <Route path="/profile" element={<Profile/>} />
+                      <Route path="/ProfileUpdate" element={<Editprofile/>} />
                       <Route path="/update/:id" element={<UpdateProduct/>} />
                     </Routes>
                   </Paper>

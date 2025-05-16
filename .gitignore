@@ -1,6 +1,6 @@
 .env
 backend/.sqlite3
-
+frontend/.env
 
 # dependencies
 frontend/node_modules

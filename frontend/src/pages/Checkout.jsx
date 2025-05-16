@@ -81,7 +81,7 @@ export default function Checkout() {
   const handleOrderSummaryAction = () => {
     setActiveStep(activeStep + 1);
   };
-  const key=process.env.RAZORPAY_API_KEY;
+  const key='rzp_test_aZ9Ne3kcPV0i6o';
 
   const handlePaymentAction = () => {
     axios.get('http://localhost:8000/create_order/', {
@@ -116,19 +116,33 @@ export default function Checkout() {
         console.log(error);
     });
 };
-const handlePlaceOrderAction = async() => {
-      try {
-        await axios.post('http://localhost:8000/placeOrder/', {
-          addressData,paid,paymentmethod,total
-        });
-        navigate('/user/orderplaced')
-      } catch (error) {
-        
-        if (error.response) {
-          console.log('Response data:', error.response.data.error);
-        }
+const handlePlaceOrderAction = async () => {
+  try {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      throw new Error('Access token is missing.');
+    }
+
+    await axios.post(
+      'http://localhost:8000/placeOrder/',
+      { addressData, paid, paymentmethod, total },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
       }
-  };
+    );
+    navigate('/user/orderplaced');
+  } catch (error) {
+    if (error.response) {
+      console.log('Response data:', error.response.data.error);
+    } else {
+      console.error('Error:', error);
+    }
+  }
+};
+
 
   const handleBack = () => {
     setActiveStep(activeStep - 1);
@@ -151,6 +165,7 @@ const handlePlaceOrderAction = async() => {
           </Stepper>
           {activeStep === steps.length ? (
             <React.Fragment>
+
               <Typography variant="h5" gutterBottom>
                 Thank you for your order.
               </Typography>

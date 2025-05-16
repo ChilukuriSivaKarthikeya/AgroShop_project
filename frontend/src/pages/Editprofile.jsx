@@ -16,7 +16,7 @@ import axios from 'axios';
 import UserContext from '../context/userContext';
 
 export default function EditProfile() {
-  const { buyer} = useContext(UserContext);
+  const { buyer,setBuyer} = useContext(UserContext);
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [village, setVillage] = useState('');
@@ -44,8 +44,7 @@ export default function EditProfile() {
           'Authorization': `Bearer ${token}`,
         },
       });
-      
-      console.log('success');
+      setBuyer(response.data)
       
     } catch (error) {
       if (error.response) {
@@ -59,10 +58,9 @@ export default function EditProfile() {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
-      });
-      
-      console.log('success');
-      
+      }); 
+      setBuyer(response.data)
+
     } catch (error) {
       if (error.response) {
         console.log('Response data:', error.response.data);
@@ -79,7 +77,7 @@ export default function EditProfile() {
                 <a href='/'>Home</a>
               </MDBBreadcrumbItem>
               <MDBBreadcrumbItem>
-                <a href="/profile">User</a>
+                <a href="/user/profile">User</a>
               </MDBBreadcrumbItem>
               <MDBBreadcrumbItem active>User Profile</MDBBreadcrumbItem>
             </MDBBreadcrumb>
@@ -113,7 +111,7 @@ export default function EditProfile() {
                     <MDBCardText className="font-weight-bold">Full Name</MDBCardText>
                   </MDBCol>
                   <MDBCol sm="9">
-                  <input value={name} className='p-3 w-75' style={{borderRadius:'8px',border:'1px solid gray'}}/>
+                  <input value={name} onChange={(e)=>setName(e.target.value)} className='p-3 w-75' style={{borderRadius:'8px',border:'1px solid gray'}}/>
                   </MDBCol>
                 </MDBRow>
                 

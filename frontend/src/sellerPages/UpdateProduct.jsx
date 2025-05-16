@@ -55,11 +55,10 @@ function UpdateProduct() {
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const token = localStorage.getItem('access_token');
           const response = await axios.get(`http://localhost:8000/product/${id}`, {
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
+              'Authorization': `Bearer ${localStorage.getItem('seller_access_token')}`,
             },
           });
           setProduct(response.data);
@@ -137,6 +136,7 @@ function UpdateProduct() {
                 <MDBCol md='9'  className='pe-5'>
                 <FormControl sx={{ width: '100%' }}  variant="outlined">
                   <OutlinedInput
+                    name="name"
                     id="outlined-adornment-weight"
                     aria-describedby="outlined-weight-helper-text"
                     inputProps={{
@@ -160,6 +160,7 @@ function UpdateProduct() {
                 <MDBCol md='9' className='pe-5'>
                 <FormControl sx={{  minWidth:'100%' }}>
                   <Select
+                    name="category"
                     value={product.category}
                     onChange= {handleChange}
                     displayEmpty
@@ -187,6 +188,7 @@ function UpdateProduct() {
                 <MDBCol md='9' className='pe-5'>
                 <FormControl sx={{ width: '100%' }}  variant="outlined">
                   <OutlinedInput
+                    name="quantity"
                     id="outlined-adornment-weight"
                     endAdornment={<InputAdornment position="end">kg</InputAdornment>}
                     aria-describedby="outlined-weight-helper-text"
@@ -209,6 +211,7 @@ function UpdateProduct() {
                 <MDBCol md='9' className='pe-5'>
                 <FormControl sx={{ width: '100%' }}  variant="outlined">
                   <OutlinedInput
+                    name="price"
                     id="outlined-adornment-weight"
                     startAdornment={<InputAdornment position="start">₹</InputAdornment>}
                     aria-describedby="outlined-weight-helper-text"
@@ -230,6 +233,7 @@ function UpdateProduct() {
                 <MDBCol md='9' className='pe-5'>
                 <FormControl sx={{ width: '100%' }} variant="outlined">
                   <OutlinedInput
+                    name="discount"
                     id="outlined-adornment-weight"
                     endAdornment={<InputAdornment position="end">%</InputAdornment>}
                     aria-describedby="outlined-weight-helper-text"

@@ -1,123 +1,186 @@
 import React, { useState, useEffect, createContext } from 'react';
 import axios from 'axios';
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 const UserContext = createContext();
 
 export default UserContext;
 
 export const UserProvider = ({ children }) => {
-  const [isAuth, setIsAuth] = useState(()=>(localStorage.getItem('access_token') ? true : false));
+  const [isAuth, setIsAuth] = useState(() => !!localStorage.getItem('access_token'));
+  const [isSellerAuth, setIsSellerAuth] = useState(() => !!localStorage.getItem('seller_access_token'));
   const [buyer, setBuyer] = useState(null);
+  const [seller, setSeller] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState('');
-  const [location,setLocation]=useState(localStorage.getItem('location') || '');
+  const [location, setLocation] = useState(localStorage.getItem('location') || '');
 
-  const navigate=useNavigate()
+  const navigate = useNavigate();
 
   const getUser = async () => {
-    if(localStorage.getItem('access_token')){
     const token = localStorage.getItem('access_token');
-    setIsLoading(true);
-    try {
-      const response = await axios.get('http://localhost:8000/buyer/', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      if(response.status === 200){
+    if (token) {
+      setIsLoading(true);
+      try {
+        const response = await axios.get('http://localhost:8000/buyer/', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
         setBuyer(response.data);
+      } catch (err) {
+        console.error("Error fetching buyer data:", err?.response || err.message);
+        logoutUser();
+        setError(err?.response?.data || err.message);
+      } finally {
         setIsLoading(false);
-      } else if(response.status === 401){
-        logoutUser()
-      }     
-    } catch (error) {
-      logoutUser()
-      setError(error);
-      setIsLoading(false);
+      }
     }
-  }
   };
-  let loginUser=async(username,password)=>{
+
+  const getSellerData = async () => {
+    const token = localStorage.getItem('seller_access_token');
+    if (token) {
+      setIsLoading(true);
+      try {
+        const response = await axios.get('http://localhost:8000/seller/', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        setSeller(response.data);
+      } catch (err) {
+        console.error("Error fetching seller data:", err?.response || err.message);
+        logoutSeller();
+        setError(err?.response?.data || err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const loginUser = async (username, password) => {
     try {
       const response = await axios.post('http://localhost:8000/login/', {
         username,
         password,
       });
-          const data = response.data;
-          setIsAuth(true)
-          localStorage.setItem('access_token', data.access);
-          localStorage.setItem('refresh_token', data.refresh);
-          axios.defaults.headers['Authorization']=`Bearer ${data.access}`;
-          navigate('/user')
-    } catch (error) {
-      if (error.response) {
-         setError(error.response.data)
-      } else {
-        console.error('An error occurred:', error.message);
-      }
+      const data = response.data;
+      setIsAuth(true);
+      localStorage.setItem('access_token', data.access);
+      localStorage.setItem('refresh_token', data.refresh);
+      await getUser();
+      navigate('/user');
+    } catch (err) {
+      console.error("Error during user login:", err?.response || err.message);
+      setError(err?.response?.data || err.message);
     }
-  }
-
-  let logoutUser = () => {
-    axios.defaults.headers['Authorization'] = null;
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('refresh_token')
-    navigate('/login')
-}
-const updateToken = async () => {
-  if(localStorage.getItem('refresh_token')){
-  const refreshToken = localStorage.getItem('refresh_token');
-  const response = await axios.post('http://localhost:8000/token/refresh/',
-      {refresh:refreshToken});
-  
-  if (response.status === 200) {
-    setIsAuth(true)
-    axios.defaults.headers['Authorization'] = `Bearer ${response.data.access}`;
-    localStorage.setItem('access_token', response.data.access);
-    localStorage.setItem('refresh_token', response.data.refresh);
-  } else {
-      logoutUser()
-  }
-
-  if(isLoading){
-      setIsLoading(false)
-  }
-}
-}
-  useEffect(()=>{
-    if(isLoading){
-        updateToken()
-    }
-    const REFRESH_INTERVAL = 1000 * 60 * 4 // 4 minutes
-    let interval = setInterval(()=>{
-        if(isAuth){
-            updateToken()
-        }
-    }, REFRESH_INTERVAL)
-    return () => clearInterval(interval)
-
-},[isAuth, isLoading])
-
-
-  const data = {
-    getUser,
-    buyer,
-    isLoading,
-    error,
-    loginUser,
-    logoutUser,
-    query,
-    setQuery,
-    location,
-    setLocation
   };
 
+  const loginSeller = async (username, password) => {
+    try {
+      const response = await axios.post('http://localhost:8000/login/', {
+        username,
+        password,
+      });
+      const data = response.data;
+      setIsSellerAuth(true);
+      localStorage.setItem('seller_access_token', data.access);
+      localStorage.setItem('refresh_seller_token', data.refresh);
+      await getSellerData();
+      navigate('/seller/orders');
+    } catch (err) {
+      console.error("Error during seller login:", err?.response || err.message);
+      setError(err?.response?.data || err.message);
+    }
+  };
+
+  const logoutUser = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    setBuyer(null);
+    setIsAuth(false);
+    navigate('/login');
+  };
+
+  const logoutSeller = () => {
+    localStorage.removeItem('seller_access_token');
+    localStorage.removeItem('refresh_seller_token');
+    setSeller(null);
+    setIsSellerAuth(false);
+    navigate('/signin');
+  };
+
+  const updateToken = async () => {
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (refreshToken) {
+      try {
+        const response = await axios.post('http://localhost:8000/token/refresh/', {
+          refresh: refreshToken,
+        });
+        const { access } = response.data;
+        localStorage.setItem('access_token', access);
+        setIsAuth(true);
+      } catch (err) {
+        console.error("Error refreshing user token:", err?.response || err.message);
+        logoutUser();
+      }
+    }
+  };
+
+  const updateSellerToken = async () => {
+    const refreshToken = localStorage.getItem('refresh_seller_token');
+    if (refreshToken) {
+      try {
+        const response = await axios.post('http://localhost:8000/token/refresh/', {
+          refresh: refreshToken,
+        });
+        const { access } = response.data;
+        localStorage.setItem('seller_access_token', access);
+        setIsSellerAuth(true);
+      } catch (err) {
+        console.error("Error refreshing seller token:", err?.response || err.message);
+        logoutSeller();
+      }
+    }
+  };
+  useEffect(() => {
+    if (isSellerAuth) {
+      getSellerData();
+    }
+  }, [isSellerAuth]);
+
+  useEffect(() => {
+    const userRefreshInterval = isAuth && setInterval(updateToken, 1000 * 60 * 4);
+    return () => clearInterval(userRefreshInterval);
+  }, [isAuth]);
+
+  useEffect(() => {
+    const sellerRefreshInterval = isSellerAuth && setInterval(updateSellerToken, 1000 * 60);
+    return () => clearInterval(sellerRefreshInterval);
+  }, [isSellerAuth]);
+
   return (
-    <UserContext.Provider value={data}>
+    <UserContext.Provider value={{
+      isAuth,
+      isSellerAuth,
+      buyer,
+      seller,
+      isLoading,
+      error,
+      setBuyer,
+      setSeller,
+      getUser,
+      loginUser,
+      logoutUser,
+      loginSeller,
+      logoutSeller,
+      query,
+      setQuery,
+      location,
+      setLocation,
+    }}>
       {children}
     </UserContext.Provider>
   );

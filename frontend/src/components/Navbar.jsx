@@ -59,11 +59,11 @@ export default function Navbar() {
     getUser()
   },[]);
 
-  const handleChange = (event) => {
+  function handleChange(event) {
     setLocation(event.target.value || '');
-    localStorage.setItem('location',event.target.value);
+    localStorage.setItem('location', event.target.value);
     setOpen(false);
-  };
+  }
   const handleClickOpen = () => {
     setOpen(true);
   };

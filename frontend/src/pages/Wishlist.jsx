@@ -15,15 +15,17 @@ import {
     import '../App.css';
     import { Player } from '@lottiefiles/react-lottie-player';
     import ProductContext from "../context/ProductContext";
+    import Aleart from "../components/Aleart";
     import Spinner from "../components/Spinner";
 
     export default function Cart() {
-    const {isLoading,wishlist,removeWishlist,addCart}=useContext(ProductContext);
+    const {isLoading,messageAlert,color,wishlist,removeWishlist,addCart}=useContext(ProductContext);
     if(isLoading){
       return <Spinner/>;
     }
     return (
       <div>
+      {messageAlert &&  <Aleart message={messageAlert} color={color} />}
       {!wishlist.length>0? <section>
         <h1 className="d-flex justify-content-center align-items-center mt-5 text-danger">No item is wishlisted</h1>
       <MDBCol md='12'>

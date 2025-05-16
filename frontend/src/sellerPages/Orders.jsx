@@ -1,4 +1,4 @@
-import React, {useEffect,useState } from 'react';
+import React from 'react';
 import axios from 'axios';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,7 +7,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 
@@ -20,11 +19,10 @@ function MyOrders() {
           const response = await axios.get('http://localhost:8000/seller/orders/', {
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+              'Authorization': `Bearer ${localStorage.getItem('seller_access_token')}`,
             },
           });
           setOrders(response.data);  
-          console.log(response.data) 
         } catch (error) {
           console.error('Error fetching products:', error);
         }
@@ -34,14 +32,12 @@ function MyOrders() {
     const updatestatus=async(e,id)=>{
       const status = e.target.value;
       try {
-        const token = localStorage.getItem('access_token');
-        const {data}=await axios.put(`http://localhost:8000/seller/orderupdate/${id}`, {'status':status}, {
+        await axios.put(`http://localhost:8000/seller/orderupdate/${id}`, {'status':status}, {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${localStorage.getItem('seller_access_token')}`,
           },
         });
-        console.log(data);
       } catch (error) {
         console.error('Error updating product:', error);
       }

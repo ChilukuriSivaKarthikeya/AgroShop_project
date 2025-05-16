@@ -19,10 +19,9 @@ import Aleart from "../components/Aleart";
 import Spinner from "../components/Spinner";
 
 export default function Cart() {
-  const {isLoading,cart,messageAlert,removeCart,handleIncrement,handleDecrement}=useContext(ProductContext)
+  const {isLoading,cart,messageAlert,color,removeCart,handleIncrement,handleDecrement}=useContext(ProductContext)
   const [total, setTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
-
 useEffect(() => {
     let calculatedTotal = 0;
     let calculatedDiscount = 0;
@@ -34,12 +33,13 @@ useEffect(() => {
     setDiscount(calculatedDiscount);
   
 }, [cart]);
+
 if(isLoading) {
   return <Spinner/>
 } 
 return (
     <div>
-       {messageAlert &&  <Aleart message={messageAlert}/>}
+       {messageAlert &&  <Aleart message={messageAlert} color={color} />}
        {!cart.length>0? (<section>
       <h1 className="d-flex justify-content-center align-items-center mt-5 text-danger">Empty Cart</h1>
       <MDBCol md='12'>

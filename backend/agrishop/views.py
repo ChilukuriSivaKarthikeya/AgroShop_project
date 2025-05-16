@@ -180,6 +180,7 @@ def updateUser(request, pk):
     buyer.mobile = data['mobile']
     buyer.village = data['village']
     buyer.pincode = data['pincode']
+    buyer.user.save()
     buyer.save()
 
     serializer = BuyerSerializer(buyer, many=False)
@@ -251,6 +252,17 @@ def addCart(request,pk):
     else:
         return Response({"message": "Product is already in the cart."}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def removeCart(request,pk):
+    try:
+        product = Products.objects.get(id=pk)
+        data = Cartitems.objects.get(product=product, user=request.user)
+        data.delete()
+        return Response({"message": "Product removed from Cart Successfully"}, status=status.HTTP_200_OK)
+    except Cartitems.DoesNotExist:
+        return Response({"message": "Cart item not found"}, status=status.HTTP_404_NOT_FOUND)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def increaseQuantity(request,pk):
@@ -268,17 +280,6 @@ def decreaseQuantity(request,pk):
     cart.quantity-=1
     cart.save()
     return Response("sucess")            
-    
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
-def removeCart(request,pk):
-    try:
-        product = Products.objects.get(id=pk)
-        data = Cartitems.objects.get(product=product)
-        data.delete()
-        return Response({"message": "Product removed from Cart Successfully"}, status=status.HTTP_200_OK)
-    except Cartitems.DoesNotExist:
-        return Response({"message": "Cart item not found"}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -362,6 +363,42 @@ def registerSeller(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
     except Exception:
             return Response({'error': 'User with this email already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET']) 
+@permission_classes([IsAuthenticated])
+def getSeller(request):
+    user = request.user
+    try:
+        seller = Seller.objects.select_related('user').get(user=user)
+        serializer = SellerSerializer(seller, many=False)
+        return Response(serializer.data)
+    except Seller.DoesNotExist:
+        return Response({'detail': 'seller not found for this user.'}, status=404)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def updateSeller(request, pk):
+    seller = Seller.objects.get(id=pk)
+    data = request.data
+    seller.user.first_name = data['name']
+    seller.mobile = data['mobile']
+    seller.village = data['village']
+    seller.pincode = data['pincode']
+    seller.user.save()
+    seller.save()
+
+    serializer = SellerSerializer(seller, many=False)
+    return Response(serializer.data)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def updateSellerImage(request, pk):
+    user =Seller.objects.get(id=pk)
+    data = request.data
+    user.image = data['image']
+    user.save()
+    serializer = SellerSerializer(user, many=False)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

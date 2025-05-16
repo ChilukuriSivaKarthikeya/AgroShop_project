@@ -13,6 +13,7 @@ export const ProductProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [messageAlert, setMessageAlert] = useState('');
+  const [color, setColor] = useState("success");
   const token = localStorage.getItem('access_token');
 
   const fetchData = async (url, setData) => {
@@ -33,43 +34,52 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-const handleAction = useCallback(async (url, method, setData) => {
-  try {
-    setIsLoading(true);
-    const response = await axios[method](url, null, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-    setChange(!change);
-    setMessageAlert(response.data.message);
-    setIsLoading(false);
-
-    setTimeout(() => {
-      setMessageAlert('');
-    }, 6000);
-  } catch (error) {
-    setError(error);
-    setIsLoading(false);
-    console.error(`Error performing action: ${error}`);
-  }
-}, [change]);
+  const handleAction = useCallback(async (url, method, data = null) => {
+    try {
+      setIsLoading(true);
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      };
+  
+      const response = method === 'post'? await axios[method](url, data, config): await axios[method](url, config); 
+      setChange(!change);
+      setMessageAlert(response.data.message);
+      setColor("success")
+      setIsLoading(false);
+  
+      setTimeout(() => {
+        setMessageAlert('');
+      }, 6000);
+    } catch (error) {
+      setIsLoading(false);
+      if (error.response?.status === 400) {
+        setMessageAlert(error.response.data.message || 'Bad Request');
+        setColor("info")
+      } else {
+        setError(error);
+        console.error(`Error performing action: ${error}`);
+      }
+    }
+  }, [change, token]);
+  
 
 const addWishlist = useCallback((id) => {
-  handleAction(`http://localhost:8000/addwishlist/${id}`, 'post', setWishlist);
+  handleAction(`http://localhost:8000/addwishlist/${id}`, 'post');
 }, [handleAction]);
 
 const removeWishlist = useCallback((id) => {
-  handleAction(`http://localhost:8000/deletewishlist/${id}`, 'delete', setWishlist);
+  handleAction(`http://localhost:8000/deletewishlist/${id}`, 'delete');
 }, [handleAction]);
 
 const addCart = useCallback((id) => {
-  handleAction(`http://localhost:8000/addcart/${id}`, 'post', setCart);
+  handleAction(`http://localhost:8000/addcart/${id}`, 'post');
 }, [handleAction]);
 
 const removeCart = useCallback((id) => {
-  handleAction(`http://localhost:8000/deletecart/${id}`, 'delete', setCart);
+  handleAction(`http://localhost:8000/deletecart/${id}`, 'delete');
 }, [handleAction]);
 
 
@@ -82,6 +92,7 @@ const removeCart = useCallback((id) => {
           'Authorization': `Bearer ${token}`,
         },
       });
+      fetchData('http://localhost:8000/cart/', setCart);
       setIsLoading(false);
     } catch (error) {
       setError(error);
@@ -110,6 +121,7 @@ const removeCart = useCallback((id) => {
     removeWishlist,
     cart,
     messageAlert,
+    color,
     addCart,
     removeCart,
     handleIncrement,

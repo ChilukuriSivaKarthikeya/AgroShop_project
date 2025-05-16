@@ -14,7 +14,8 @@ class BuyerSerializer(serializers.ModelSerializer):
         model = Buyer  
         fields ='__all__'   
 
-class SellerSerializer(serializers.ModelSerializer):  
+class SellerSerializer(serializers.ModelSerializer):
+    user = UserSerializer()    
     class Meta:  
         model = Seller  
         fields = '__all__'

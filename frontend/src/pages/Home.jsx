@@ -5,28 +5,31 @@ import ProductList from '../components/ProductList';
 import ProductContext from "../context/ProductContext";
 import Aleart from '../components/Aleart';
 
-function Home() {
-    const navigate=useNavigate()
-    const {messageAlert}=useContext(ProductContext)
-    const [isAuth, setIsAuth] = useState(false);
-    useEffect(() => {
-      if (localStorage.getItem('access_token') !== null) {
-         setIsAuth(true); 
-       }
-     }, [isAuth]);
 
-    return ( 
-     <div>
-      {messageAlert &&  <Aleart message={messageAlert}/>}
-        {isAuth? 
+function Home() {
+  const navigate = useNavigate();
+  const { messageAlert,color } = useContext(ProductContext);
+  const [isAuth, setIsAuth] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem('access_token') !== null) {
+      setIsAuth(true);
+    } else {
+      navigate('/login'); 
+    }
+  }, [navigate]); 
+
+  return (
+    <div>
+      {messageAlert && <Aleart message={messageAlert} color={color} />}
+      {isAuth && (
         <div>
-        <Carousels />
-        <ProductList/>
-        </div> 
-        :
-         (navigate("/login"))
-        }
-     </div>
-     );
+          <Carousels />
+          <ProductList />
+        </div>
+      )}
+    </div>
+  );
 }
+
 export default Home;

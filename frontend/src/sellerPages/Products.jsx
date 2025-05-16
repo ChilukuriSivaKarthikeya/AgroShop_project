@@ -23,7 +23,7 @@ export default function MyProducts() {
         const response = await axios.get('http://localhost:8000/seller/products/', {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Authorization': `Bearer ${localStorage.getItem('seller_access_token')}`,
           },
         });
         dispatch({ type: Action_Success, payload: response.data });
@@ -39,7 +39,7 @@ export default function MyProducts() {
         dispatch({ type: Action_Request });
         await axios.delete(`http://localhost:8000/deleteproduct/${id}`, {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                'Authorization': `Bearer ${localStorage.getItem('seller_access_token')}`,
             },
         });
         dispatch({ type: Action_Success, payload: data.products.filter(product => product.id !== id) });
