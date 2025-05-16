@@ -16,19 +16,19 @@ AgroShop is a platform where users can buy organic vegetables, fruits, and flowe
 ## 🖼️ Screenshots
 
 ### 🔐 Login Page
-<img src="screenshots/login.png" alt="Login Page" width="600"/>
+<img src="frontend/public/screenshots/login.png" alt="Login Page" width="600"/>
 
 ### 🏠 Home Page
-<img src="screenshots/homepage.png" alt="Home Page" width="600"/>
+<img src="frontend/public/screenshots/products.png" alt="Home Page" width="600"/>
 
 ### 💖 Wishlist Page
-<img src="screenshots/wishlist.png" alt="Wishlist Page" width="600"/>
+<img src="frontend/public/screenshots/wishlist.png" alt="Wishlist Page" width="600"/>
 
 ### 🛒 Cart Page
-<img src="screenshots/cart.png" alt="Cart Page" width="600"/>
+<img src="frontend/public/screenshots/cart.png" alt="Cart Page" width="600"/>
 
 ### 🛒 Payment Page
-<img src="screenshots/payment.png" alt="Payment Page" width="600"/>
+<img src="frontend/public/screenshots/payment.png" alt="Payment Page" width="600"/>
 
 
 ## 📦 Installation
